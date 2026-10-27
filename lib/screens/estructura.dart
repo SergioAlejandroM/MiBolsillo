@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mibolsillo/screens/dashboard_screen.dart';
 import 'package:mibolsillo/screens/inicio_screen.dart';
-import 'package:mibolsillo/screens/prueba.dart';
+import 'package:mibolsillo/screens/agregar_screen.dart';
+import 'package:mibolsillo/screens/historial_screen.dart';
+import 'package:mibolsillo/screens/presupuestos_screen.dart';
 import 'package:mibolsillo/theme/colores.dart';
 
 class Estructura extends StatefulWidget {
@@ -18,11 +21,11 @@ class _EstructuraState extends State<Estructura> {
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: const [
-          InicioScreen(),
-          Center(child: Text('Historial', style: TextStyle(color: texto))),
-          Center(child: Text('Stats', style: TextStyle(color: texto))),
-          Center(child: Text('Presup.', style: TextStyle(color: texto))),
+        children: [
+          InicioScreen(onVerTodo: () => setState(() => _selectedIndex = 1)),
+          const HistorialScreen(),
+          const DashboardScreen(),
+          const PresupuestosScreen(),
         ],
       ),
       floatingActionButton: Transform.translate(
@@ -32,7 +35,7 @@ class _EstructuraState extends State<Estructura> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Prueba()),
+              MaterialPageRoute(builder: (context) => const AgregarScreen()),
             );
           },
           backgroundColor: acento,

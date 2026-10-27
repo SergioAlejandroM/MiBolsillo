@@ -1,53 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mibolsillo/models/categoria.dart';
-import 'package:mibolsillo/models/tipo.dart';
-import 'package:mibolsillo/models/transaccion.dart';
+import 'package:mibolsillo/providers/presupuesto_provider.dart';
+import 'package:mibolsillo/providers/transaccion_provider.dart';
+import 'package:mibolsillo/providers/categoria_provider.dart';
+import 'package:mibolsillo/screens/detalle_transaccion_screen.dart';
 import 'package:mibolsillo/theme/colores.dart';
-import 'package:mibolsillo/utils/datos_ejemplo.dart';
 import 'package:mibolsillo/widgets/fila_transaccion.dart';
 import 'package:mibolsillo/widgets/tarjeta_balance.dart';
 import 'package:mibolsillo/widgets/tarjeta_meta_diaria.dart';
+import 'package:provider/provider.dart';
 
 class InicioScreen extends StatelessWidget {
-  const InicioScreen({super.key});
 
-  bool _esDelMes(Transaccion tx, DateTime hoy) =>
-      tx.fecha.year == hoy.year && tx.fecha.month == hoy.month;
+  const InicioScreen({super.key, required this.onVerTodo});
 
-  bool _esDeHoy(Transaccion tx, DateTime hoy) =>
-      _esDelMes(tx, hoy) && tx.fecha.day == hoy.day;
-
-  int _sumar(Iterable<Transaccion> lista) =>
-      lista.fold(0, (suma, tx) => suma + tx.monto);
-
-  Categoria _categoriaDe(int id) => categorias.firstWhere((c) => c.id == id);
-
-  // TODO: el ícono pasará a guardarse en la categoría (fase de Categorías)
-  IconData _iconoDe(int categoriaId) {
-    return switch (categoriaId) {
-      1 => Icons.restaurant,
-      2 => Icons.directions_bus,
-      _ => Icons.attach_money,
-    };
-  }
+  final VoidCallback onVerTodo;
 
   @override
   Widget build(BuildContext context) {
-    final hoy = DateTime.now(); // una sola vez, para que todo sea coherente
+    final prov = context.watch<TransaccionProvider>();
+    final catProv = context.watch<CategoriaProvider>();
+    final presProv = context.watch<PresupuestoProvider>();
+    final hoy = DateTime.now();
 
-    final delMes = transacciones.where((tx) => _esDelMes(tx, hoy)).toList();
-    final ingresos = _sumar(delMes.where((tx) => tx.tipo == Tipo.ingreso));
-    final gastos = _sumar(delMes.where((tx) => tx.tipo == Tipo.gasto));
+    final ingresos = prov.ingresosDelMes(hoy);
+    final gastos = prov.gastosDelMes(hoy);
     final balance = ingresos - gastos;
 
-    final gastosHoy = transacciones
-        .where((tx) => tx.tipo == Tipo.gasto && _esDeHoy(tx, hoy))
-        .toList();
-    final gastadoHoy = _sumar(gastosHoy); 
+    final gastosHoy = prov.gastosDeHoy();
+    final gastadoHoy = prov.gastadoHoy();
+
 
     final diasDelMes = DateTime(hoy.year, hoy.month + 1, 0).day;
-    final limiteDiario = (ingresos / diasDelMes).round();
+    final limiteDiario = (presProv.limiteTotalDelMes(hoy) / diasDelMes).round();
     final progreso = limiteDiario == 0 ? 0.0 : gastadoHoy / limiteDiario;
 
     final mes = toBeginningOfSentenceCase(DateFormat('MMM yyyy', 'es').format(hoy));
@@ -62,7 +47,7 @@ class InicioScreen extends StatelessWidget {
               children: [
                 const Text(
                   'Hola, Alejo',
-                  style: TextStyle(color: texto, fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: texto_, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   mes,
@@ -84,10 +69,10 @@ class InicioScreen extends StatelessWidget {
               children: [
                 const Text(
                   'Gastos de hoy',
-                  style: TextStyle(color: texto, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: texto_, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 GestureDetector(
-                  onTap: () {}, // TODO: ir a Historial
+                  onTap: onVerTodo,
                   child: const Text(
                     'Ver todo',
                     style: TextStyle(color: acento, fontSize: 14, fontWeight: FontWeight.w500),
@@ -105,13 +90,14 @@ class InicioScreen extends StatelessWidget {
                 ),
               )
             else
-              ...gastosHoy.map(
-                (tx) => FilaTransaccion(
+              ...gastosHoy.map((tx){
+                final cat = catProv.porId(tx.categoriaId);
+                return FilaTransaccion(
                   transaccion: tx,
-                  categoria: _categoriaDe(tx.categoriaId),
-                  icono: _iconoDe(tx.categoriaId),
-                ),
-              ),
+                  categoria: cat,
+                  icono: cat.iconData,
+                );
+              }),
           ],
         ),
       ),

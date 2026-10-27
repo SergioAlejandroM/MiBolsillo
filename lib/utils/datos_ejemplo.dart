@@ -1,14 +1,19 @@
+import 'package:flutter/material.dart';
 import 'package:mibolsillo/models/categoria.dart';
 import 'package:mibolsillo/models/metodo_pago.dart';
 import 'package:mibolsillo/models/tipo.dart';
 import 'package:mibolsillo/models/transaccion.dart';
 import 'package:mibolsillo/theme/colores.dart';
+import 'package:mibolsillo/models/presupuesto.dart';
+import 'package:mibolsillo/utils/fechas.dart';
 
-final Categoria comida = Categoria(id: 1, nombre: 'Comida', tipo: Tipo.gasto, color: naranja);
-final Categoria transporte = Categoria(id: 2, nombre: 'Transporte', tipo: Tipo.gasto, color: azul);
-final Categoria dinero = Categoria(id: 3, nombre: 'Dinero', tipo: Tipo.ingreso, color: ingreso);
+final Categoria comida = Categoria(id: 1, nombre: 'Comida', tipo: Tipo.gasto, color: naranja, icono: 'restaurante');
+final Categoria transporte = Categoria(id: 2, nombre: 'Transporte', tipo: Tipo.gasto, color: azul, icono: 'bus');
+final Categoria dinero = Categoria(id: 3, nombre: 'Dinero', tipo: Tipo.ingreso, color: ingreso, icono: 'dinero');
+final Categoria compras = Categoria(id: 4, nombre: 'Compras', tipo: Tipo.gasto, color: const Color(0xFFF472B6), icono: 'compras');
+final Categoria hogar = Categoria(id: 5, nombre: 'Hogar', tipo: Tipo.gasto, color: const Color(0xFFA78BFA), icono: 'hogar');
 
-final List<Categoria> categorias = [comida, transporte, dinero];
+final List<Categoria> categorias = [comida, transporte, dinero, compras, hogar];
 
 final DateTime ahora = DateTime.now();
 
@@ -36,4 +41,9 @@ final List<Transaccion> transacciones = [
       categoriaId: 2, fecha: _hace(1, 18, 40), concepto: 'Transmilenio'),
   Transaccion(id: 7, monto: 45000, tipo: Tipo.gasto, metodoPago: MetodoPago.debito,
       categoriaId: 1, fecha: _hace(3, 17, 0), concepto: 'Mercado'),
+];
+
+final List<Presupuesto> presupuestos = [
+  Presupuesto(id: 1, categoriaId: 1, montoLimite: 500000, fechaPresupuesto: primerDiaMes(ahora)),
+  Presupuesto(id: 2, categoriaId: 2, montoLimite: 20000, fechaPresupuesto: primerDiaMes(ahora)),
 ];
