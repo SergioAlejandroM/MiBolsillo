@@ -11,7 +11,6 @@ class Tema {
       seedColor: acento,
       brightness: Brightness.dark,
     ),
-    textTheme: GoogleFonts.manropeTextTheme() as TextTheme?,
   );
 }
 
