@@ -33,7 +33,7 @@ class TarjetaBalance extends StatelessWidget{
           const SizedBox(height: 8),
 
           Text(
-            formatoMoneda(balance as int),
+            formatoMoneda(balance),
             style: const TextStyle(
               color: texto,
               fontSize: 32,
@@ -59,7 +59,7 @@ class TarjetaBalance extends StatelessWidget{
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      formatoMoneda(ingresos as int),
+                      formatoMoneda(ingresos),
                       style: const TextStyle(
                         color: texto,
                         fontSize: 18,
@@ -84,7 +84,7 @@ class TarjetaBalance extends StatelessWidget{
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      formatoMoneda(gastos as int),
+                      formatoMoneda(gastos),
                       style: const TextStyle(
                         color: texto,
                         fontSize: 18,

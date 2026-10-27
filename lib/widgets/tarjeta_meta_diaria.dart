@@ -48,7 +48,7 @@ class TarjetaMetaDiaria extends StatelessWidget{
                 ),
               ),
               Text(
-                'de ${formatoMoneda(limite as int)}',
+                'de ${formatoMoneda(limite)}',
                 style: const TextStyle(
                   color: textoApagado,
                   fontSize: 13,
@@ -60,7 +60,7 @@ class TarjetaMetaDiaria extends StatelessWidget{
 
           // Monto gastado actual
           Text(
-            formatoMoneda(gastado as int),
+            formatoMoneda(gastado),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 28,
